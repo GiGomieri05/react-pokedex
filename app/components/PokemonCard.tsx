@@ -5,9 +5,17 @@ type PokemonCardProps = {
   name: string;
   abilities: string;
   imageUrl: string;
+  isFavorite: boolean;
+  onToggleFavorite: () => void;
 };
 
-const PokemonCard = ({ name, abilities, imageUrl }: PokemonCardProps) => {
+const PokemonCard = ({
+  name,
+  abilities,
+  imageUrl,
+  isFavorite,
+  onToggleFavorite,
+}: PokemonCardProps) => {
   return (
     <div className="bg-red-600 border-2 border-red-800 rounded-xl m-1 p-6 w-xl max-w-full">
       <div className="flex justify-between items-center align-middle flex-row">
@@ -21,7 +29,18 @@ const PokemonCard = ({ name, abilities, imageUrl }: PokemonCardProps) => {
           />
           <p className="font-bold text-lg capitalize">{name}</p>
         </div>
-        <Star className="self-start text-gray-300" width={32} height={32} />
+        <button
+          onClick={onToggleFavorite}
+          aria-label="Toggle favorite"
+          className="self-start p-2"
+        >
+          <Star
+            className={`${isFavorite ? "fill-amber-400 text-amber-400" : "text-gray-300"}`}
+            fill={isFavorite ? "currentColor" : "none"}
+            width={32}
+            height={32}
+          />
+        </button>
       </div>
       <div className="bg-white rounded-lg mt-4 p-4 w-full text-gray-900 text-sm flex flex-row">
         <p className="capitalize mr-1">

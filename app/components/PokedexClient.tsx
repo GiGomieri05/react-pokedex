@@ -17,6 +17,8 @@ export default function PokedexClient() {
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
+  const [favorites, setFavorites] = useState<string[]>([]);
+
   // useState, useEffect e IntersectionObserver
 
   async function loadMore() {
@@ -46,7 +48,13 @@ export default function PokedexClient() {
       if (!Array.isArray(data.items))
         throw new Error("Resposta invalida da API");
 
-      setPokemons((prev) => [...prev, ...data.items]);
+      setPokemons((prev) => {
+        const merged = [...prev, ...data.items]; // tudo junto
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const unique = new Map(merged.map((p: any) => [p.name, p])); // sobrescreve os repetidos pelo mesmo nome
+        return Array.from(unique.values()); // vira uma lista sem duplicados
+      });
+
       setNextUrl(data.nextUrl);
     } catch (err) {
       setError("Falha ao carregar pokemons...");
@@ -56,8 +64,28 @@ export default function PokedexClient() {
   }
 
   useEffect(() => {
+    // carregar os pokemons favorites salvos (favoritos estrela)
+    const saved = localStorage.getItem("favorites"); // string | null
+    if (saved) {
+      // se existir
+      try {
+        const parsed = JSON.parse(saved); // converte o json para array
+        if (Array.isArray(parsed)) {
+          setFavorites(parsed); // salva em favorites
+        }
+      } catch {
+        // se der erro, ignora e comeca vazio
+        setFavorites([]);
+      }
+    }
+
+    // carrega primeira pagina de pokemons
     loadMore();
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem("favorites", JSON.stringify(favorites)); // salva o array como JSON no LocalStorage
+  }, [favorites]);
 
   useEffect(() => {
     const el = sentinelRef.current; // elemento real do dom
@@ -82,6 +110,17 @@ export default function PokedexClient() {
     };
   }, [isLoading, nextUrl]);
 
+  function toggleFavorite(name: string) {
+    setFavorites((prev) => {
+      if (prev.includes(name)) {
+        return prev.filter((n) => n !== name); // se o valor ja tinha, tira
+      } else {
+        return [...prev, name]; // se nao tinha, inclui
+        // sempre retorna um array novo
+      }
+    });
+  }
+
   return (
     <div className="grid gap-4 p-6 w-full h-fit max-w-5xl max-h-fit grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
       {pokemons.map((p) => (
@@ -90,6 +129,8 @@ export default function PokedexClient() {
           name={p.name}
           abilities={p.abilities}
           imageUrl={p.imageUrl}
+          isFavorite={favorites.includes(p.name)} // se esta ou nao favoritado
+          onToggleFavorite={() => toggleFavorite(p.name)} // chama o toggle
         />
       ))}
 

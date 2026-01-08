@@ -52,6 +52,7 @@ export async function GET(request: Request) {
 
         // pega o array de habilidades e transforma em um string formatado
         const abilities: string = (detail.abilities ?? [])
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           .map((a: any) => a?.ability?.name)
           .filter(Boolean)
           .join(", ");
