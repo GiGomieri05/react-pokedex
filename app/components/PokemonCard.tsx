@@ -19,12 +19,15 @@ const PokemonCard = ({ name, abilities, imageUrl }: PokemonCardProps) => {
             height={96}
             className="rounded-xl mr-4"
           />
-          <div className="font-bold text-lg">{name}</div>
+          <p className="font-bold text-lg capitalize">{name}</p>
         </div>
         <Star className="self-start text-gray-300" width={32} height={32} />
       </div>
-      <div className="bg-white rounded-lg mt-4 p-4 w-full text-gray-900 text-sm">
-        <span className="font-bold">Habilidades:</span> {abilities}
+      <div className="bg-white rounded-lg mt-4 p-4 w-full text-gray-900 text-sm flex flex-row">
+        <p className="capitalize mr-1">
+          <b>habilidades: </b>
+          {abilities}
+        </p>
       </div>
     </div>
   );
