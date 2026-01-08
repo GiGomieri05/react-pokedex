@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import PokemonCard from "./PokemonCard";
+import { CircularProgress } from "@mui/material";
 
 type PokemonCardData = {
   name: string;
@@ -122,25 +123,22 @@ export default function PokedexClient() {
   }
 
   return (
-    <div className="grid gap-4 p-6 w-full h-fit max-w-5xl max-h-fit grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-      {pokemons.map((p) => (
-        <PokemonCard
-          key={p.name}
-          name={p.name}
-          abilities={p.abilities}
-          imageUrl={p.imageUrl}
-          isFavorite={favorites.includes(p.name)} // se esta ou nao favoritado
-          onToggleFavorite={() => toggleFavorite(p.name)} // chama o toggle
-        />
-      ))}
+    <div className="flex flex-col align-top items-center">
+      <div className="grid gap-4 p-6 w-full h-fit max-w-5xl max-h-fit grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        {pokemons.map((p) => (
+          <PokemonCard
+            key={p.name}
+            name={p.name}
+            abilities={p.abilities}
+            imageUrl={p.imageUrl}
+            isFavorite={favorites.includes(p.name)} // se esta ou nao favoritado
+            onToggleFavorite={() => toggleFavorite(p.name)} // chama o toggle
+          />
+        ))}
 
-      {isLoading && (
-        <div className="font-bold text-2xl self-center text-black">
-          Carregando...
-        </div>
-      )}
-
-      <div ref={sentinelRef} className="h-1"></div>
+        <div ref={sentinelRef} className="h-1"></div>
+      </div>
+      {isLoading && <CircularProgress className="m-20" />}
     </div>
   );
 
